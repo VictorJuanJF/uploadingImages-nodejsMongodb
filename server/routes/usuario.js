@@ -3,6 +3,7 @@ const app = express();
 const _ = require('underscore');
 const bodyParser = require('body-parser');
 const Usuario = require('../models/usuario');
+var bcrypt = require('bcrypt');
 
 // parse application/x-www-form-urlencoded
 
@@ -45,7 +46,7 @@ app.post('/usuario', (req, res) => {
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcrypt.hashSync(body.password, 10),
         role: body.role
     });
 
