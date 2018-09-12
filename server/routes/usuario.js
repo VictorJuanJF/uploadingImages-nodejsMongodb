@@ -105,7 +105,7 @@ app.delete('/usuario/:id', (req, res) => {
             return res.status(400).json({
                 ok: false,
                 error: {
-                    message: 'No existe el usuario con ese id'
+                    message: 'No existe el usuario que dijiste'
                 }
             });
         }
