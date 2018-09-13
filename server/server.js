@@ -1,11 +1,13 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
+const path = require('path');
 
 require('./config/config.js');
 
 //Configuracion global de rutas
 app.use(require('./routes/index.js'));
+app.use(express.static(path.resolve(__dirname, '../public')));
 
 
 
