@@ -72,9 +72,66 @@ app.post('/google', async(req, res) => {
                 err: e
             });
         });
-    res.json({
-        usuario: googleUser
+    Usuario.findOne({ email: googleUser.email }, (err, usuarioDB) => {
+        if (err) {
+            return res.status(500).json({
+                ok: false,
+                err
+            });
+        };
+        if (usuarioDB) {
+            if (usuarioDB.google == false) {
+                return res.status(500).json({
+                    ok: false,
+                    err: {
+                        message: 'Debe de usar su autenticacion normal'
+                    }
+                });
+            } else {
+                let token = jwt.sign({
+                    usuario: usuarioDB
+                }, process.env.SEED, { expiresIn: process.env.CADUCIDAD });
+
+                return res.json({
+                    ok: true,
+                    usuario: usuarioDB,
+                    token
+                });
+            }
+        } else {
+            // Si el usuario no existe en la bd hay que crearlo
+            let usuario = new Usuario();
+            usuario.nombre = googleUser.nombre;
+            usuario.email = googleUser.email;
+            usuario.img = googleUser.img;
+            usuario.google = true;
+            usuario.password = ':V';
+
+            usuario.save((err, usuarioDB) => {
+                if (err) {
+                    return res.status(500).json({
+                        ok: false,
+                        err
+                    });
+                };
+                let token = jwt.sign({
+                    usuario: usuarioDB
+                }, process.env.SEED, { expiresIn: process.env.CADUCIDAD });
+
+                return res.json({
+                    ok: true,
+                    usuario: usuarioDB,
+                    token
+                });
+
+            });
+
+        }
+
     });
+    // res.json({
+    //     usuario: googleUser
+    // });
 });
 
 module.exports = app;
