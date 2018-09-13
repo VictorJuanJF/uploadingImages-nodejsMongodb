@@ -4,7 +4,9 @@ const mongoose = require('mongoose');
 
 require('./config/config.js');
 
-app.use(require('./routes/usuario'));
+//Configuracion global de rutas
+app.use(require('./routes/index'));
+
 
 
 

@@ -3,7 +3,7 @@ const app = express();
 const _ = require('underscore');
 const bodyParser = require('body-parser');
 const Usuario = require('../models/usuario');
-var bcrypt = require('bcrypt');
+const { verificaToken, verificaRol_Admin } = require('../middlewares/auth');
 
 // parse application/x-www-form-urlencoded
 
@@ -12,7 +12,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // parse application/json
 app.use(bodyParser.json());
 
-app.get('/usuario', function(req, res) {
+app.get('/usuario', verificaToken, function(req, res) {
 
     let desde = req.query.desde || 0;
     desde = Number(desde);
@@ -41,12 +41,12 @@ app.get('/usuario', function(req, res) {
         });
 });
 
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificaToken, verificaRol_Admin], (req, res) => {
     let body = req.body;
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: bcrypt.hashSync(body.password, 10),
+        password: body.password,
         role: body.role
     });
 
